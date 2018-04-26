@@ -2,84 +2,82 @@
 
 namespace win
 {
-	Wnd Wsng::wnd = Wnd();
-	Wsng::Wsng() { open(); }
-	Wsng::~Wsng() { close(); }
+    Wnd Wsng::wnd = Wnd();
+    Wsng::Wsng() { open(); }
+    Wsng::~Wsng() { close(); }
 
-	Wsng& Wsng::instance()
-	{
-		static Wsng sng;
-		return sng;
-	}
+    Wsng& Wsng::instance()
+    {
+        static Wsng sng;
+        return sng;
+    }
 
-	long __stdcall Wsng::WindowProcedure(HWND window, unsigned int msg, WPARAM wp, LPARAM lp)
-	{
-		Wnd* w = Wsng::window();
-		Event* e = w->event();
-		e->wnd = window;
-		e->msg = msg;
-		e->wp = wp;
-		e->lp = lp;
-		w->nextEvent();
-		return DefWindowProc(window, msg, wp, lp);
-	}
+    long __stdcall Wsng::WindowProcedure(HWND window, unsigned int msg, WPARAM wp, LPARAM lp)
+    {
+        Wnd* w = Wsng::window();
+        Event* e = w->event();
+        e->wnd = window;
+        e->msg = msg;
+        e->wp = wp;
+        e->lp = lp;
+        w->nextEvent();
+        return DefWindowProc(window, msg, wp, lp);
+    }
 
-	Wnd* Wsng::window() { return &wnd; }
+    Wnd* Wsng::window() { return &wnd; }
 
-	Wnd* Wsng::create()
-	{
-		Wsng::instance();
-		return &wnd;
-	}
+    Wnd* Wsng::create()
+    {
+        Wsng::instance();
+        return &wnd;
+    }
 
-	void Wsng::run()
-	{
-		MSG msg;
-		while (GetMessage(&msg, NULL, 0, 0)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
+    void Wsng::run()
+    {
+        MSG msg;
+        while (GetMessage(&msg, NULL, 0, 0)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
 
-	void Wsng::open()
-	{
-		const char* const myclass = "application";
+    void Wsng::open()
+    {
+        const char* const myclass = "application";
 
-		wnd.hinstance(GetModuleHandle(NULL));
+        wnd.hinstance(GetModuleHandle(NULL));
 
-		WNDCLASSEX c;
-		c.cbSize = sizeof(WNDCLASSEX);
-		c.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-		c.lpfnWndProc = WindowProcedure;
-		c.cbClsExtra = 0;
-		c.cbWndExtra = 0;
-		c.hInstance = wnd.hinstance();
-		c.hIcon = NULL;
-		c.hCursor = LoadCursor(0, IDC_ARROW);
-		c.hbrBackground = HBRUSH(COLOR_WINDOW + 1);
-		c.lpszMenuName = NULL;
-		c.lpszClassName = myclass;
-		c.hIconSm = NULL;// LoadIcon(0, IDI_APPLICATION);
+        WNDCLASSEX c;
+        c.cbSize = sizeof(WNDCLASSEX);
+        c.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+        c.lpfnWndProc = WindowProcedure;
+        c.cbClsExtra = 0;
+        c.cbWndExtra = 0;
+        c.hInstance = wnd.hinstance();
+        c.hIcon = NULL;
+        c.hCursor = LoadCursor(0, IDC_ARROW);
+        c.hbrBackground = HBRUSH(COLOR_WINDOW + 1);
+        c.lpszMenuName = NULL;
+        c.lpszClassName = myclass;
+        c.hIconSm = NULL;// LoadIcon(0, IDI_APPLICATION);
 
-		RegisterClassEx(&c);
-		HWND wid = CreateWindowEx(
-			0,
-			myclass,
-			wnd.title().c_str(),
-			WS_OVERLAPPEDWINDOW,
-			0,
-			0,
-			wnd.width(),
-			wnd.height(),
-			NULL,
-			NULL,
-			wnd.hinstance(),
-			NULL
-		);
+        RegisterClassEx(&c);
+        HWND wid = CreateWindowEx(
+            0,
+            myclass,
+            wnd.title().c_str(),
+            WS_OVERLAPPEDWINDOW,
+            0,
+            0,
+            wnd.width(),
+            wnd.height(),
+            NULL,
+            NULL,
+            wnd.hinstance(),
+            NULL
+        );
 
-		wnd.window(wid);
-	}
-
-	void Wsng::close() { }
-
+        wnd.window(wid);
+    }
+    void Wsng::close() { }
 }

@@ -12,28 +12,30 @@ namespace win
         return sng;
     }
 
-    long __stdcall Wsng::WindowProcedure(HWND window, unsigned int msg, WPARAM wp, LPARAM lp)
+    long __stdcall Wsng::WindowProcedure(HWND hWnd, unsigned int msg, WPARAM wp, LPARAM lp)
     {
-        Wnd* w = Wsng::window();
+        Wnd* w = window();
         Event* e = w->event();
-        e->wnd = window;
+        e->wnd = hWnd;
         e->msg = msg;
         e->wp = wp;
         e->lp = lp;
-        w->nextEvent();
-        return DefWindowProc(window, msg, wp, lp);
+        wnd.nextEvent();
+        return DefWindowProc(hWnd, msg, wp, lp);
     }
 
     Wnd* Wsng::window() { return &wnd; }
 
     Wnd* Wsng::create()
     {
-        Wsng::instance();
+        instance();
         return &wnd;
     }
 
     void Wsng::run()
     {
+        if (!wnd.isCorrect()) return;
+        if (wnd.events() == nullptr) wnd.show();
         MSG msg;
         while (GetMessage(&msg, NULL, 0, 0)) {
             TranslateMessage(&msg);

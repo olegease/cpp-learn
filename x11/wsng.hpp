@@ -5,9 +5,12 @@
 #include <string>
 #include "wnd.hpp"
 
+extern "C" {
+    #include <X11/Xlib.h>
+}
+
 namespace x11
 {
-    #include <X11/Xlib.h>
     class Wsng;
 
     class Wsng

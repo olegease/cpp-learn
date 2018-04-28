@@ -1,15 +1,14 @@
 #include "wnd.hpp"
 
+#include <iostream>
+
 namespace x11
 {
-    Wnd::Wnd(): ttl("Untitled"), w(640), h(480), ents([=](Wnd*)->void {}) { }
+    Wnd::Wnd(): ttl("Untitled"), w(640), h(480), ents(nullptr), dpy(nullptr), wnd(0) { }
 
     void Wnd::nextEvent()
     {
         if (ents != nullptr) {
-            XEvent e;
-            XNextEvent(dpy, reinterpret_cast< XEvent* >(&e));
-            ent = &e;
             ents(this);
         }
     }
@@ -22,16 +21,16 @@ namespace x11
 
     XEvent* Wnd::event() { return ent; }
 
-    void Wnd::show() { XMapWindow(dpy, wnd); }
+    void Wnd::show() { if (isCorrect()) XMapWindow(dpy, wnd); }
 
-    void Wnd::hide() { XUnmapWindow(dpy, wnd); }
+    void Wnd::hide() { if (isCorrect()) XUnmapWindow(dpy, wnd); }
 
     std::string Wnd::title() { return ttl; }
 
-    void Wnd::title(std::string rename)
+    void Wnd::title(const std::string& rename)
     {
         ttl = rename;
-        if (dpy != nullptr) XStoreName(dpy, wnd, rename.c_str());
+        if (isCorrect()) XStoreName(dpy, wnd, rename.c_str());
     }
 
     Display* Wnd::display() { return dpy; }

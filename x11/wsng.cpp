@@ -81,7 +81,7 @@ namespace x11
             switch (e.type) {
                 case ClientMessage: if (static_cast< Atom >(e.xclient.data.l[0]) == WM_DELETE_WINDOW) return;
             }
-            XNextEvent(wnd.display(), reinterpret_cast< XEvent* >(&e));
+            XNextEvent(wnd.display(), static_cast< XEvent* >(&e));
         }
     }
 }

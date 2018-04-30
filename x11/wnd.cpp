@@ -13,9 +13,9 @@ namespace x11
         }
     }
 
-    void Wnd::events(fwndptr f) { ents = f; }
+    void Wnd::events(func_wnd f) { ents = f; }
 
-    fwndptr Wnd::events() { return ents; }
+    func_wnd Wnd::events() { return ents; }
 
     void Wnd::event(XEvent *e) { ent = e; }
 

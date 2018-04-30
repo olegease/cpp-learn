@@ -2,6 +2,7 @@
 #define _LEARN_X11_WND_HPP_
 
 #include <string>
+#include <functional>
 #include <iostream>
 extern "C" {
     #include <X11/Xlib.h>
@@ -11,22 +12,22 @@ extern "C" {
 namespace x11
 {
     class Wnd;
-    typedef void (*fwndptr)(Wnd*);
+    typedef std::function< void(Wnd*) > func_wnd;
 
     class Wnd
     {
         Display *dpy;
         Window wnd;
         std::string ttl;
-        fwndptr ents;
+        func_wnd ents;
         XEvent* ent;
         int w;
         int h;
     public:
         Wnd();
         void nextEvent();
-        void events(fwndptr f);
-        fwndptr events();
+        void events(func_wnd f);
+        func_wnd events();
         void event(XEvent *e);
         XEvent* event();
         void show();

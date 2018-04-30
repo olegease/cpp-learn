@@ -68,6 +68,9 @@ namespace x11
         // Show window as user cannot show it themself if it unmapped/hide
         if (wnd.events() == nullptr) wnd.show();
 
+        Atom WM_DELETE_WINDOW = XInternAtom(wnd.display(), "WM_DELETE_WINDOW", false);
+        XSetWMProtocols(wnd.display(), wnd.window(), &WM_DELETE_WINDOW, 1);
+
         XEvent e;
         while (1) {
             wnd.event(&e);
@@ -75,6 +78,9 @@ namespace x11
             // in case when user want define when to show window
             // in other order XNextEvent freezing application
             wnd.nextEvent();
+            switch (e.type) {
+                case ClientMessage: if (static_cast< Atom >(e.xclient.data.l[0]) == WM_DELETE_WINDOW) return;
+            }
             XNextEvent(wnd.display(), reinterpret_cast< XEvent* >(&e));
         }
     }

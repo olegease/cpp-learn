@@ -25,8 +25,8 @@ void leave(x11::Wnd* w)
 {
     XEvent* e = w->event();
     if (!isShow) {
-        std::this_thread::sleep_for(std::chrono::seconds(3));
         isShow = true;
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         w->show();
         return;
     }
@@ -50,4 +50,3 @@ int main()
 
     return 0;
 }
-

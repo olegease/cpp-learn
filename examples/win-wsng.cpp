@@ -1,16 +1,53 @@
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include "../win/wsng.hpp"
 
-void f(win::Wnd* w)
+bool isShow = false;
+
+void btnpress(win::Wnd* w);
+void leave(win::Wnd* w);
+
+void btnpress(win::Wnd* w)
 {
-    switch (w->event()->msg) {
+    win::Event* e = w->event();
+    switch (e->msg) {
         case WM_DESTROY: {
-            std::cout << "\ndestroying window\n";
             PostQuitMessage(0);
             break;
         }
         case WM_LBUTTONDOWN: {
-            std::cout << "\nmouse left button down at (" << LOWORD(w->event()->lp) << ',' << HIWORD(w->event()->lp) << ")\n";
+            std::cout << "WM_LBUTTONDOWN" << std::endl;
+            w->title("In WM_MOUSELEAVE mode");
+            w->events(leave);
+            break;
+        }
+    }
+}
+
+void leave(win::Wnd* w)
+{
+    if (!isShow) {
+        isShow = true;
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        w->show();
+        return;
+    }
+    win::Event* e = w->event();
+    switch (e->msg) {
+        case WM_MOUSEMOVE: {
+            TRACKMOUSEEVENT tme;
+            tme.cbSize = sizeof(TRACKMOUSEEVENT);
+            tme.dwFlags = TME_LEAVE;
+            tme.dwHoverTime = 1;
+            tme.hwndTrack = w->window();
+            TrackMouseEvent(&tme);
+            break;
+        }
+        case WM_MOUSELEAVE: {
+            std::cout << "WM_MOUSELEAVE" << std::endl;
+            w->title("In WM_LBUTTONDOWN mode");
+            w->events(btnpress);
             break;
         }
     }
@@ -19,9 +56,8 @@ void f(win::Wnd* w)
 int main()
 {
     win::Wnd* w = win::Wsng::create();
-    w->events(f);
+    w->events(leave);
     w->title("Titled");
-    w->show();
     win::Wsng::run();
-return 0;
+    return 0;
 }

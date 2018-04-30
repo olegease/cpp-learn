@@ -32,6 +32,7 @@ namespace win
     public:
         Wnd();
         ~Wnd();
+        bool isCorrect();
         void nextEvent();
         HWND window();
         void window(HWND w);

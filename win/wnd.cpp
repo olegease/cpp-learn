@@ -1,13 +1,17 @@
 #include "wnd.hpp"
 
+#include <iostream>
+
 namespace win
 {
-    Wnd::Wnd() : w(640), h(480), ttl("Untitled"), ent(new Event) { }
+    Wnd::Wnd() : w(640), h(480), ttl("Untitled"), ent(new Event), ents(nullptr), hin(0), wnd(0) { }
     Wnd::~Wnd() { delete ent; }
+
+    bool Wnd::isCorrect() { return (hin && wnd); }
 
     void Wnd::nextEvent()
     {
-        if (ents) {
+        if (ents != nullptr) {
             ents(this);
         }
     }
@@ -21,13 +25,13 @@ namespace win
     void Wnd::events(fwndptr events) { ents = events; }
     fwndptr Wnd::events() { return ents; }
 
-    void Wnd::show() { ShowWindow(wnd, SW_SHOW); }
-    void Wnd::hide() { ShowWindow(wnd, SW_HIDE); }
+    void Wnd::show() { if (isCorrect()) ShowWindow(wnd, SW_SHOW); }
+    void Wnd::hide() { if (isCorrect()) ShowWindow(wnd, SW_HIDE); }
 
     void Wnd::title(const std::string& rename)
     {
-        SetWindowText(wnd, rename.c_str());
         ttl = rename;
+        if (isCorrect()) SetWindowText(wnd, rename.c_str());
     }
     std::string& Wnd::title() { return ttl; }
 

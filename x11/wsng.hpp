@@ -4,6 +4,7 @@
 
 #include <string>
 #include "wnd.hpp"
+#include "glc.hpp"
 
 extern "C" {
     #include <X11/Xlib.h>
@@ -16,14 +17,15 @@ namespace x11
     class Wsng
     {
         static Wnd wnd;
-        Wsng();
-        static Wsng& instance();
-        void open();
+        Wsng(glc* gl = nullptr);
+        static Wsng& instance(glc* gl = nullptr);
+        void open(glc* gl = nullptr);
         void close();
     public:
         ~Wsng();
         static Wnd* create();
         static Wnd* create(std::string rename);
+        static Wnd* create(glc* gl);
         static Wnd* window();
         static void run();
 

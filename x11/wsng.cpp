@@ -6,34 +6,53 @@ namespace x11
 {
     Wnd Wsng::wnd = Wnd();
 
-    Wsng::Wsng() { open(); }
+    Wsng::Wsng(glc* gl) { open(gl); }
     Wsng::~Wsng() { close(); }
-    Wsng& Wsng::instance()
+    Wsng& Wsng::instance(glc* gl)
     {
-        static Wsng sng;
+        static Wsng sng(gl);
         return sng;
     }
 
-    void Wsng::open()
+    void Wsng::open(glc* gl)
     {
-        Display *dpy = XOpenDisplay(NULL);
-        Wnd* w = window();
-        w->display(dpy);
-        XSetWindowAttributes attr;
-        Window wid = XCreateWindow(
-            dpy,
-            XRootWindow(dpy, 0),
-            0, 0, w->width(), w->height(), 1,
-            XDefaultDepth(dpy, 0),
+        wnd.display(XOpenDisplay(NULL));
+        Window root = XRootWindow(wnd.display(), 0);
+        XSetWindowAttributes swa;
+        swa.event_mask = ButtonPressMask | LeaveWindowMask | ExposureMask;
+        int wmask = CWEventMask;
+        int depth;
+        Visual *visual;
+        XVisualInfo *vi;
+        if (gl != nullptr) {
+            Colormap cmap;
+            vi = glXChooseVisual(wnd.display(), 0, gl->attributes());
+            depth = vi->depth;
+            visual = vi->visual;
+            cmap = XCreateColormap(wnd.display(), root, visual, AllocNone);
+            wmask |= CWColormap;
+            swa.colormap = cmap;
+        } else {
+            depth = XDefaultDepth(wnd.display(), 0);
+            visual = XDefaultVisual(wnd.display(), 0);
+            wmask |= CWBackPixel;
+        }
+
+        wnd.window(XCreateWindow(
+            wnd.display(),
+            root,
+            0, 0, wnd.width(), wnd.height(), 1,
+            depth,
             InputOutput,
-            XDefaultVisual(dpy, 0),
-            CWBackPixel,
-            &attr
-        );
-        w->window(wid);
-        XStoreName(dpy, wid, w->title().c_str());
-        // TODO: add working with events masks
-        XSelectInput(dpy, wid, ButtonPressMask | LeaveWindowMask | ExposureMask);
+            visual,
+            wmask,
+            &swa
+        ));
+
+        if (gl != nullptr) {
+            gl->context(glXCreateContext(wnd.display(), vi, NULL, GL_TRUE));
+            glXMakeCurrent(wnd.display(), wnd.window(), gl->context());
+        }
     }
 
     void Wsng::close()
@@ -59,6 +78,12 @@ namespace x11
         instance();
         wnd.title(rename);
         return &Wsng::wnd;
+    }
+
+    Wnd* Wsng::create(glc* gl)
+    {
+        instance(gl);
+        return &wnd;
     }
 
     void Wsng::run()

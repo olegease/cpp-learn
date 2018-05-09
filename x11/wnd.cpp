@@ -4,7 +4,8 @@
 
 namespace x11
 {
-    Wnd::Wnd(): ttl("Untitled"), w(640), h(480), ents(nullptr), dpy(nullptr), wnd(0) { }
+    Wnd::Wnd() : ttl("Untitled"), w(640), h(480), ents(nullptr), dpy(nullptr), wnd(0) { }
+    Wnd::Wnd(int width, int height) : ttl("Untitled"), w(width), h(height), ents(nullptr), dpy(nullptr), wnd(0) { }
 
     void Wnd::nextEvent()
     {

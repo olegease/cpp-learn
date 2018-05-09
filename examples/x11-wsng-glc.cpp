@@ -21,8 +21,11 @@ void f(x11::Wnd* w)
 
 int main()
 {
-    x11::glc gl;
-    x11::Wnd* w = x11::Wsng::create(&gl);
+    x11::Wnd win(200, 200);
+    x11::glc glc;
+
+    glc.createWindow(win);
+    x11::Wnd* w = x11::Wsng::assign(win);
     w->title("OpenGL default context example, context version: ");
     w->events(f);
     glViewport(0, 0, w->width(), w->height());

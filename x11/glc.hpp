@@ -6,6 +6,13 @@
 #include <GL/glu.h>
 #include <array>
 
+
+#include "wnd.hpp"
+
+extern "C" {
+    #include <X11/Xlib.h>
+}
+
 namespace x11
 {
     class glc
@@ -13,10 +20,11 @@ namespace x11
         std::array< GLint, 5 > att;
         GLXContext c;
     public:
-        glc(): att({GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None}) { }
-        GLXContext context() { return c; }
-        void context(GLXContext nc) { c = nc; }
-        GLint* attributes() { return &att[0]; }
+        glc();
+        GLXContext context();
+        void context(GLXContext nc);
+        GLint* attributes();
+        void createWindow(Wnd& wnd);
     };
 }
 

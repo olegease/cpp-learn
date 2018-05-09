@@ -6,16 +6,17 @@ namespace x11
 {
     Wnd Wsng::wnd = Wnd();
 
-    Wsng::Wsng(glc* gl) { open(gl); }
+    Wsng::Wsng() { open(); }
     Wsng::~Wsng() { close(); }
-    Wsng& Wsng::instance(glc* gl)
+    Wsng& Wsng::instance()
     {
-        static Wsng sng(gl);
+        static Wsng sng;
         return sng;
     }
 
-    void Wsng::open(glc* gl)
+    void Wsng::open()
     {
+        if (wnd.isCorrect()) return;
         wnd.display(XOpenDisplay(NULL));
         Window root = XRootWindow(wnd.display(), 0);
         XSetWindowAttributes swa;
@@ -23,20 +24,10 @@ namespace x11
         int wmask = CWEventMask;
         int depth;
         Visual *visual;
-        XVisualInfo *vi;
-        if (gl != nullptr) {
-            Colormap cmap;
-            vi = glXChooseVisual(wnd.display(), 0, gl->attributes());
-            depth = vi->depth;
-            visual = vi->visual;
-            cmap = XCreateColormap(wnd.display(), root, visual, AllocNone);
-            wmask |= CWColormap;
-            swa.colormap = cmap;
-        } else {
-            depth = XDefaultDepth(wnd.display(), 0);
-            visual = XDefaultVisual(wnd.display(), 0);
-            wmask |= CWBackPixel;
-        }
+
+        depth = XDefaultDepth(wnd.display(), 0);
+        visual = XDefaultVisual(wnd.display(), 0);
+        wmask |= CWBackPixel;
 
         wnd.window(XCreateWindow(
             wnd.display(),
@@ -48,11 +39,6 @@ namespace x11
             wmask,
             &swa
         ));
-
-        if (gl != nullptr) {
-            gl->context(glXCreateContext(wnd.display(), vi, NULL, GL_TRUE));
-            glXMakeCurrent(wnd.display(), wnd.window(), gl->context());
-        }
     }
 
     void Wsng::close()
@@ -80,9 +66,10 @@ namespace x11
         return &Wsng::wnd;
     }
 
-    Wnd* Wsng::create(glc* gl)
+    Wnd* Wsng::assign(const Wnd& rhs)
     {
-        instance(gl);
+        wnd = rhs;
+        instance();
         return &wnd;
     }
 

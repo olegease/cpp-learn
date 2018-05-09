@@ -25,6 +25,7 @@ namespace x11
         int h;
     public:
         Wnd();
+        Wnd(int width, int height);
         void nextEvent();
         void events(func_wnd f);
         func_wnd events();

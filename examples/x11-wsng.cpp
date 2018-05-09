@@ -42,7 +42,8 @@ void leave(x11::Wnd* w)
 
 int main()
 {
-    x11::Wnd* w = x11::Wsng::create();
+    x11::Wnd mw(800, 1000);
+    x11::Wnd* w = x11::Wsng::assign(mw);
     w->title("Titled");
     std::cout << w->title() << std::endl;
     w->events(leave);

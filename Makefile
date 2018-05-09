@@ -3,7 +3,7 @@ infocall = ./info.out
 examplecall = ./example.out
 OUTE = -oexample.out
 WSNG = x11/wnd.cpp x11/wsng.cpp
-X11-WSNG = $(OUTE) examples/x11-wsng.cpp $(WSNG)  -lX11
+X11-WSNG = $(OUTE) examples/x11-wsng.cpp $(WSNG)  -lX11 -lGL -lGLU
 X11-WSNG-GLC = $(OUTE) examples/x11-wsng-glc.cpp $(WSNG) -lX11 -lGL -lGLU
 info:
 	$(C) -oinfo.out info.cpp
@@ -11,7 +11,7 @@ info:
 x11-wsng:
 	$(C) $(X11-WSNG)
 x11-wsng-r:
-	$(C) $(X11_WSNG)
+	$(C) $(X11-WSNG)
 	$(examplecall)
 x11-wsng-glc:
 	$(C) $(X11-WSNG-GLC)

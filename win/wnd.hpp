@@ -2,6 +2,7 @@
 #define _LEARN_WIN_WND_HPP_
 
 #include <string>
+#include <functional>
 
 extern "C" {
     #include <windows.h>
@@ -18,14 +19,14 @@ namespace win
     };
 
     class Wnd;
-    typedef void(*fwndptr)(Wnd*);
 
     class Wnd
     {
+        using func = std::function< void(Wnd*) >;
         HINSTANCE hin;
         HWND wnd;
         std::string ttl;
-        fwndptr ents;
+        func ents;
         Event* ent;
         int w;
         int h;
@@ -38,8 +39,8 @@ namespace win
         void window(HWND w);
         Event* event();
         void event(Event* e);
-        fwndptr events();
-        void events(fwndptr f);
+        func events();
+        void events(func f);
         void show();
         void hide();
         void title(const std::string& rename);

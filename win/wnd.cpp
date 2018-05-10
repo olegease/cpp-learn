@@ -22,8 +22,8 @@ namespace win
     void Wnd::event(Event* event) { ent = event; }
     Event* Wnd::event() { return ent; }
 
-    void Wnd::events(fwndptr events) { ents = events; }
-    fwndptr Wnd::events() { return ents; }
+    void Wnd::events(func events) { ents = events; }
+    Wnd::func Wnd::events() { return ents; }
 
     void Wnd::show() { if (isCorrect()) ShowWindow(wnd, SW_SHOW); }
     void Wnd::hide() { if (isCorrect()) ShowWindow(wnd, SW_HIDE); }

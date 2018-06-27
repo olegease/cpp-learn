@@ -12,7 +12,7 @@ namespace win
         return sng;
     }
 
-    long __stdcall Wsng::WindowProcedure(HWND hWnd, unsigned int msg, WPARAM wp, LPARAM lp)
+    LRESULT WINAPI Wsng::WindowProcedure(HWND hWnd, unsigned int msg, WPARAM wp, LPARAM lp)
     {
         Wnd* w = window();
         Event* e = w->event();

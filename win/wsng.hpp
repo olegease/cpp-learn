@@ -14,7 +14,7 @@ namespace win
         static Wnd wnd;
         Wsng();
         static Wsng& instance();
-        static long __stdcall WindowProcedure(HWND window, unsigned int msg, WPARAM wp, LPARAM lp);
+        static LRESULT WINAPI WindowProcedure(HWND window, unsigned int msg, WPARAM wp, LPARAM lp);
         void open();
         void close();
     public:
